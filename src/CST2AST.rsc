@@ -18,7 +18,11 @@ import String;
 
 AForm cst2ast(start[Form] sf) {
   Form f = sf.top; // remove layout before and after form
-  return form("", [], src=f@\loc); 
+  return cst2ast(f); 
+}
+
+AForm cst2ast(f:(Form)`form <Id id> { <Question* questions> }`) {
+  return form("<id>", [ cst2ast(question) | Question question <- questions], src = f@\loc);
 }
 
 AQuestion cst2ast(Question q) {
