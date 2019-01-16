@@ -38,7 +38,8 @@ TEnv collect(AForm f) {
 }
 
 set[Message] check(AForm f, TEnv tenv, UseDef useDef) {
-  return {check(question, tenv, useDef) | question <- f.questions}; 
+  //return {check(question, tenv, useDef) | question <- f.questions}; 
+  return ( {} | it + check(question, tenv, useDef) | question <- f.questions);
 }
 
 // - produce an error if there are declared questions with the same name but different types.
@@ -46,8 +47,10 @@ set[Message] check(AForm f, TEnv tenv, UseDef useDef) {
 // - the declared type computed questions should match the type of the expression.
 set[Message] check(AQuestion q, TEnv tenv, UseDef useDef) {
   set[Message] messages = {};
-  message += checkNameTypeMismatch(q.id, q.typeName, q.src, tenv, useDef);
-  messages += checkDuplicateLabels(q.label, q.id, q.src, tenv, useDef);
+  if (q is question || q is computedQuestion) {
+    messages += checkNameTypeMismatch(q.id, q.typeName, q.src, tenv, useDef);
+    messages += checkDuplicateLabels(q.label, q.id, q.src, tenv, useDef);
+  }
   if (q is computedQuestion) {
     messages += checkComputedQuestionType(q.typeName, q.expression, q.src, tenv, useDef);
     messages += check(q.expression, tenv, useDef);
@@ -62,7 +65,7 @@ set[Message] checkNameTypeMismatch(str id, AType typeName, loc l, TEnv tenv, Use
 }
 
 set[Message] checkDuplicateLabels(str label, str id, loc l, TEnv tenv, UseDef useDef) {
-  set[Message] message = {};
+  set[Message] messages = {};
   messages += { warning("Same label used for different questions", l) | any(<_, name, label2, _> <- tenv, id != name && label == label2) };
   return messages;
 }

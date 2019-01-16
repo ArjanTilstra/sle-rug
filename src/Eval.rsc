@@ -39,6 +39,14 @@ VEnv initialEnv(AForm f) {
   return venv;
 }
 
+Value defaultValue(AType typeName) {
+  switch (typeName) {
+    case boolean(): return vbool(false);
+    case integer(): return vint(0);
+    case string(): return vstr("");
+  }
+}
+
 // Because of out-of-order use and declaration of questions
 // we use the solve primitive in Rascal to find the fixpoint of venv.
 VEnv eval(AForm f, Input inp, VEnv venv) {
@@ -70,7 +78,7 @@ VEnv eval(AQuestion q, Input inp, VEnv venv) {
     case ifThen(AExpr expression, list[AQuestion] questions): {
       if (eval(expression, venv).b) {
         for (/AQuestion question := questions) {
-          venv = eval(question);
+          venv = eval(question, inp, venv);
         }
         return venv;
       } else {

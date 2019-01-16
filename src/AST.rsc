@@ -20,7 +20,7 @@ data AQuestion(loc src = |tmp:///|)
 
 data AExpr(loc src = |tmp:///|)
   = ref(str name)
-  | boolean(bool b)
+  | boolean(bool b1)
   | integer(int i)
   | string(str s)
   | not(AExpr expression)
