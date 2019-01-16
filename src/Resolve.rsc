@@ -33,5 +33,5 @@ Use uses(AForm f) {
  * specifically as the id attribute, which only occurs in normal
  * questions and computed questions. */
 Def defs(AForm f) {
-  return { <question.id, question.src> | /AQuestion question <- f.questions, q has id }; 
+  return { <question.id, question.src> | /AQuestion question <- f.questions, question has id }; 
 }

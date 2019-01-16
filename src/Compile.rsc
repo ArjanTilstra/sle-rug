@@ -28,20 +28,22 @@ void compile(AForm f) {
 HTML5Node form2html(AForm f) {
   return html(
     head(
-      title("QL"),
-      script(src("https://cdn.jsdelivr.net/npm/vue")),
-      script(src(f.src[extension="js"].file))
+      title("QL")
     ),
     body(
-      id("app"), 
-      questions2html(f.questions)
+      div(
+        id("app"), 
+        questions2html(f.questions)
+      ),
+      script(src("https://cdn.jsdelivr.net/npm/vue")),
+      script(src(f.src[extension="js"].file))
     )
   );
 }
 
 HTML5Node questions2html(list[AQuestion] questions) {
   return div(
-    div([question2html[question] | question <- questions])
+    div([question2html(question) | question <- questions])
   );
 }
 
@@ -50,25 +52,25 @@ HTML5Node question2html(AQuestion question) {
     case question(str label, str id, AType typeName): 
       return div(
         p(label),
-        input(html5attr("v-model.number", id), \type(type2htmlStr(typeName)))
+        input(html5attr("v-model", id), \type(type2htmlStr(typeName)))
       );
     case computedQuestion(str label, str id, AType typeName, AExpr expression): 
       return div(
         p(label),
-        input(html5attr("v-model.number", id), \type(type2htmlStr(typeName)), readonly([]))
+        input(html5attr("v-model", id), \type(type2htmlStr(typeName)), readonly([]))
       );
-    case ifThen(AExpr _, list[AQuestion] questions, src = loc l):
-      return div(
-        html5attr("v-if", "if_<l.begin.line>_<l.begin.column>"),
+    case ifThen(AExpr expression, list[AQuestion] questions):
+      return template(
+        html5attr("v-if", "if_<expression.src.begin.line>_<expression.src.begin.column>"),
         questions2html(questions)
       );
-    case ifThenElse(AExpr _, list[AQuestion] questions1, list[AQuestion] questions2):
+    case ifThenElse(AExpr expression, list[AQuestion] questions1, list[AQuestion] questions2):
       return div(
-        div(
-          html5attr("v-if", "if_<l.begin.line>_<l.begin.column>"),
+        template(
+          html5attr("v-if", "if_<expression.src.begin.line>_<expression.src.begin.column>"),
           questions2html(questions1)
         ),
-        div(
+        template(
           html5attr("v-else"),
           questions2html(questions2)
         )
@@ -88,38 +90,38 @@ str type2htmlStr(AType typeName) {
 
 str form2js(AForm f) {
   return "var app = new Vue({
-  	     `  el: \'#app\'
-  	     `  data: {
-  	     `    <for (/AQuestion question := f.questions) {>
-  	     `      <if (question has id && !(question has expression)) {>
-  	     `        <question.id>: <defaultValue(questions.typeName)>,
-  	     `      <}>
-  	     `    <}>
-  	     `  },
-  	     `  computed: {
-  	     `    <for (/AQuestion question := f.questions) {>
-  	     `      <if (question has id && question has expression) {>
-  	     `        <question.id>: function() {
-  	     `          return <expr2js(question.expression)>;
-  	     `        },
-  	     `      <}>
-  	     `    <}>
-  	     `    <for (/AQuestion question := f.questions) {>
-  	     `      <if (!(question has id) && question has expression) {>
-  	     `        if_<question.expression.src.begin.line>_<question.expression.src.begin.column>: function() {
-  	     `          return <expr2js(q.expression)>;
-  	     `        },
-  	     `      <}>
-  	     `    <}>
-  	     `  }
-  	     `});";
+  	     '  el: \'#app\',
+  	     '  data: {
+  	     '    <for (/AQuestion question := f.questions) {>
+  	     '      <if (question has id && !(question has expression)) {>
+  	     '        <question.id>: <defaultValue(question.typeName)>,
+  	     '      <}>
+  	     '    <}>
+  	     '  },
+  	     '  computed: {
+  	     '    <for (/AQuestion question := f.questions) {>
+  	     '      <if (question has id && question has expression) {>
+  	     '        <question.id>: function() {
+  	     '          return <expr2js(question.expression)>;
+  	     '        },
+  	     '      <}>
+  	     '    <}>
+  	     '    <for (/AQuestion question := f.questions) {>
+  	     '      <if (!(question has id) && question has expression) {>
+  	     '        if_<question.expression.src.begin.line>_<question.expression.src.begin.column>: function() {
+  	     '          return <expr2js(question.expression)>;
+  	     '        },
+  	     '      <}>
+  	     '    <}>
+  	     '  }
+  	     '});";
 }
 
 str defaultValue(AType typeName) {
   switch (typeName) {
-    case boolean(): "false";
-    case integer(): "0";
-    case string(): "\"\"";
+    case boolean(): return "false";
+    case integer(): return "0";
+    case string(): return "\"\"";
   }
 }
 
