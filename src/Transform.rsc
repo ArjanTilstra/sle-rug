@@ -29,12 +29,12 @@ import AST;
  */
  
 AForm flatten(AForm f) {
-  return AForm(f.name, flatten(f.questions, boolean(true)));
+  return form(f.name, flatten(f.questions, boolean(true)));
 }
 
 list[AQuestion] flatten(list[AQuestion] questions, AExpr expression) {
-  list[AQuestions] transformedQuestions = [];
-  for (/AQuestion question := f.questions) {
+  list[AQuestion] transformedQuestions = [];
+  for (/AQuestion question := questions) {
     transformedQuestions += flatten(question, expression);
   }
   return transformedQuestions;

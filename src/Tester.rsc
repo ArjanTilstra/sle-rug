@@ -12,7 +12,7 @@ import ParseTree;
 import Message;
 
 AForm tester() {
-  concrete = parse(#start[Form], |project://QL/examples/tax.myql|);
+  concrete = parse(#start[Form], |project://QL/examples/test.myql|);
   
   abstract = cst2ast(concrete);
   
@@ -23,6 +23,8 @@ AForm tester() {
   
   venv = eval(abstract, input("hasSoldHouse", vbool(true)), initialEnv(abstract));
   
-  compile(abstract);
+  abstract = flatten(abstract);
+  
+  //compile(abstract);
   return abstract;
 }

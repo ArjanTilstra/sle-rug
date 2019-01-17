@@ -86,14 +86,14 @@ VEnv eval(AQuestion q, Input inp, VEnv venv) {
       }
     }
     case ifThenElse(AExpr expression, list[AQuestion] questions1, list[AQuestion] questions2): {
-      if (eval(Expression, venv).b) {
+      if (eval(expression, venv).b) {
         for (/AQuestion question := questions1) {
-          venv = eval(question);
+          venv = eval(question, inp, venv);
         }
         return venv;
       } else {
         for (/AQuestion question := questions2) {
-          venv = eval(question);
+          venv = eval(question, inp, venv);
         }
         return venv;
       }
@@ -109,7 +109,7 @@ Value eval(AExpr e, VEnv venv) {
     case integer(int i): return vint(i);
     case string(str s): return vstr(s);
     case not(AExpr expression): return vbool(!eval(expression, venv).b);
-    case parentheses(AExpr expression): return eval(expression, vent);
+    case parentheses(AExpr expression): return eval(expression, venv);
     case multiply(AExpr a, AExpr b): 
       return vint(eval(a, venv).n * eval(b, venv).n);
     case divide(AExpr a, AExpr b): 

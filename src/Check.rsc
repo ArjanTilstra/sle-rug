@@ -52,8 +52,17 @@ set[Message] check(AQuestion q, TEnv tenv, UseDef useDef) {
     messages += checkDuplicateLabels(q.label, q.id, q.src, tenv, useDef);
   }
   if (q is computedQuestion) {
-    messages += checkComputedQuestionType(q.typeName, q.expression, q.src, tenv, useDef);
+    messages += checkComputedQuestion(q.typeName, q.expression, q.src, tenv, useDef);
     messages += check(q.expression, tenv, useDef);
+  }
+  if (q is ifThen) {
+    messages += check(q.expression, tenv, useDef);
+    messages += ( {} | it + check(question, tenv, useDef) | question <- q.questions);
+  }
+  if (q is ifThenElse) {
+  	messages += check(q.expression, tenv, useDef);
+    messages += ( {} | it + check(question, tenv, useDef) | question <- q.questions1);
+    messages += ( {} | it + check(question, tenv, useDef) | question <- q.questions2);
   }
   return messages;
 }
@@ -72,7 +81,7 @@ set[Message] checkDuplicateLabels(str label, str id, loc l, TEnv tenv, UseDef us
 
 set[Message] checkComputedQuestion(AType typeName, AExpr expression, loc l, TEnv tenv, UseDef useDef) {
   set[Message] messages = {};
-  message += { error("Expression type does not match question type", l) | typeConvert(typeName) != typeOf(expression, tenv, useDef) };
+  messages += { error("Expression type does not match question type", l) | typeConvert(typeName) != typeOf(expression, tenv, useDef) };
   return messages;
 }
 
