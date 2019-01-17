@@ -20,7 +20,7 @@ data AQuestion(loc src = |tmp:///|)
 
 data AExpr(loc src = |tmp:///|)
   = ref(str name)
-  | boolean(bool b1)
+  | boolean(bool b1) // Duplicate variable names with the expressions further down is not allowed, therefore b1. 
   | integer(int i)
   | string(str s)
   | not(AExpr expression)
