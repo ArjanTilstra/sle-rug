@@ -5,6 +5,7 @@ import AST;
 
 import ParseTree;
 import String;
+import Boolean;
 
 /*
  * Implement a mapping from concrete syntax trees (CSTs) to abstract syntax trees (ASTs)

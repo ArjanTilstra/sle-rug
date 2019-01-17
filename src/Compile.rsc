@@ -71,7 +71,7 @@ HTML5Node question2html(AQuestion question) {
           questions2html(questions1)
         ),
         template(
-          html5attr("v-else"),
+          html5attr("v-else", ""),
           questions2html(questions2)
         )
       );
