@@ -25,6 +25,6 @@ AForm tester() {
   
   abstract = flatten(abstract);
   
-  //compile(abstract);
+  compile(abstract);
   return abstract;
 }
