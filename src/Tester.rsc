@@ -60,5 +60,5 @@ start[Form] renameTest() {
   concrete = parse(#start[Form], |project://QL/examples/tax.myql|);
   abstract = cst2ast(concrete);
   useDef = resolve(abstract);
-  return rename(concrete, |project://QL/examples/tax.myql|(462,11,<20,45>,<20,56>), "testName", useDef);
+  return rename(concrete, |project://QL/examples/tax.myql|(466,12,<20,30>,<20,42>), "testName", useDef);
 }
