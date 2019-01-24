@@ -11,24 +11,6 @@ import Transform;
 import ParseTree;
 import Message;
 
-AForm tester() {
-  concrete = parse(#start[Form], |project://QL/examples/tax.myql|);
-  
-  abstract = cst2ast(concrete);
-  
-  tenv = collect(abstract);
-  useDef = resolve(abstract);
-  
-  set[Message] messages = check(abstract, tenv, useDef);
-  
-  venv = eval(abstract, input("hasSoldHouse", vbool(true)), initialEnv(abstract));
-  
-  //abstract = flatten(abstract);
-  
-  compile(abstract);
-  return abstract;
-}
-
 start[Form] parseTest(loc filename) {
   return parse(#start[Form], filename);
 }
